@@ -20,32 +20,7 @@ This Firefox extension allows you to:
 
 ## Sharing with ChessDev Hub
 To share this tool with other members of the ChessDev Hub:
-- Upload the ZIP or folder to the club's shared resource (Google Drive, Discord, etc.)
-- Or host the repo on GitHub (see below)
-- Encourage users to install via `about:debugging` or a guide you provide
 
-## Security & Protection Tips
-- Keep the extension local or in a private GitHub repo
-- Do not publish to the Firefox Add-ons store unless reviewed and tested
-- To prevent unauthorized use, add a `README` disclaimer: "Not for redistribution without author’s permission"
-- To restrict updates, don't use auto-updating manifest keys
-
-## Starting a GitHub Project
-1. Go to [https://github.com](https://github.com) and sign in
-2. Click "+" → New Repository
-3. Name it `tinymce-clipboard-injector`
-4. Choose **Private** (to limit to ChessDev Hub)
-5. Upload the files manually or use Git:
-
-```bash
-git init
-git remote add origin https://github.com/YOUR_USERNAME/tinymce-clipboard-injector.git
-git add .
-git commit -m "Initial commit"
-git push -u origin master
-```
-
-6. Add ChessDev Hub members as collaborators (Settings → Collaborators & teams)
 
 ## License
 See [LICENSE](LICENSE) for MIT license terms.
