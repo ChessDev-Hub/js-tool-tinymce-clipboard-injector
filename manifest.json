@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "TinyMCE Clipboard Injector",
+  "version": "2.0",
+  "description": "Inject clipboard HTML (converted with &nbsp; indentation) into Chess.com forum replies.",
+  "permissions": ["scripting", "activeTab", "clipboardRead"],
+  "host_permissions": ["https://www.chess.com/*"],
+  "action": {
+    "default_title": "Paste & Inject Clipboard HTML"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
