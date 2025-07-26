@@ -1,4 +1,4 @@
-# WIP Colaborators needed
+# WIP -- Colaborators needed
 # TinyMCE Clipboard Injector for Chess.com Forums
 
 ## What It Does
