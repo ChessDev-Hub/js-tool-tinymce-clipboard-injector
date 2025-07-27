@@ -1,0 +1,76 @@
+<pre style="background:#fffacc; color:#111; padding:1em; border-radius:8px; font-family:monospace;"><span style="color:#0055ff; font-weight:bold;">import</span>&nbsp;chess<br>
+<span style="color:#0055ff; font-weight:bold;">import</span>&nbsp;random<br>
+<br>
+PIECE_VALUES&nbsp;=&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;chess.PAWN:&nbsp;<span style="color:#00aa88;">1</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;chess.KNIGHT:&nbsp;<span style="color:#00aa88;">3</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;chess.BISHOP:&nbsp;<span style="color:#00aa88;">3</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;chess.ROOK:&nbsp;<span style="color:#00aa88;">5</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;chess.QUEEN:&nbsp;<span style="color:#00aa88;">9</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;chess.KING:&nbsp;<span style="color:#00aa88;">0</span>&nbsp;<span style="color:#00aa00; font-weight:bold;">#&nbsp;King&#x27;s&nbsp;value&nbsp;doesn&#x27;t&nbsp;matter&nbsp;here</span><br>
+}<br>
+<br>
+<span style="color:#0055ff; font-weight:bold;">def</span>&nbsp;<span style="color:#222; font-weight:bold;">evaluate_board</span>(board):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;=&nbsp;<span style="color:#00aa88;">0</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">for</span>&nbsp;piece_type&nbsp;<span style="color:#0055ff; font-weight:bold;">in</span>&nbsp;PIECE_VALUES:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;+=&nbsp;<span style="color:#00bfbf; font-weight:bold;">len</span>(board.<span style="color:#222; font-weight:bold;">pieces</span>(piece_type,&nbsp;chess.WHITE))&nbsp;*&nbsp;PIECE_VALUES[piece_type]&nbsp;<span style="color:#00aa00; font-weight:bold;">#&nbsp;count&nbsp;white&nbsp;pieces</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;-=&nbsp;<span style="color:#00bfbf; font-weight:bold;">len</span>(board.<span style="color:#222; font-weight:bold;">pieces</span>(piece_type,&nbsp;chess.BLACK))&nbsp;*&nbsp;PIECE_VALUES[piece_type]&nbsp;<span style="color:#00aa00; font-weight:bold;">#&nbsp;count&nbsp;black&nbsp;pieces</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">return</span>&nbsp;value<br>
+<br>
+<span style="color:#0055ff; font-weight:bold;">def</span>&nbsp;<span style="color:#222; font-weight:bold;">minimax</span>(board,&nbsp;depth,&nbsp;is_maximizing):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">if</span>&nbsp;depth&nbsp;==&nbsp;<span style="color:#00aa88;">0</span>&nbsp;<span style="color:#0055ff; font-weight:bold;">or</span>&nbsp;board.<span style="color:#222; font-weight:bold;">is_game_over</span>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">return</span>&nbsp;<span style="color:#222; font-weight:bold;">evaluate_board</span>(board)&nbsp;<span style="color:#00aa00; font-weight:bold;">#&nbsp;<span style="color:#0055ff; font-weight:bold;">return</span>&nbsp;material&nbsp;count&nbsp;at&nbsp;leaf</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;legal_moves&nbsp;=&nbsp;<span style="color:#222; font-weight:bold;">list</span>(board.legal_moves)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">if</span>&nbsp;is_maximizing:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max_eval&nbsp;=&nbsp;<span style="color:#00bfbf; font-weight:bold;">float</span>(&<span style="color:#00aa00; font-weight:bold;">#x27;-inf&#x27;)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">for</span>&nbsp;move&nbsp;<span style="color:#0055ff; font-weight:bold;">in</span>&nbsp;legal_moves:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;board.<span style="color:#222; font-weight:bold;">push</span>(move)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eval&nbsp;=&nbsp;<span style="color:#222; font-weight:bold;">minimax</span>(board,&nbsp;depth&nbsp;-&nbsp;<span style="color:#00aa88;">1</span>,&nbsp;<span style="color:#0055ff; font-weight:bold;">False</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;board.<span style="color:#222; font-weight:bold;">pop</span>()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max_eval&nbsp;=&nbsp;<span style="color:#222; font-weight:bold;">max</span>(max_eval,&nbsp;eval)&nbsp;<span style="color:#00aa00; font-weight:bold;">#&nbsp;find&nbsp;max&nbsp;value&nbsp;<span style="color:#0055ff; font-weight:bold;">for</span>&nbsp;white</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">return</span>&nbsp;max_eval<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">else</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;min_eval&nbsp;=&nbsp;<span style="color:#00bfbf; font-weight:bold;">float</span>(&<span style="color:#00aa00; font-weight:bold;">#x27;inf&#x27;)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">for</span>&nbsp;move&nbsp;<span style="color:#0055ff; font-weight:bold;">in</span>&nbsp;legal_moves:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;board.<span style="color:#222; font-weight:bold;">push</span>(move)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eval&nbsp;=&nbsp;<span style="color:#222; font-weight:bold;">minimax</span>(board,&nbsp;depth&nbsp;-&nbsp;<span style="color:#00aa88;">1</span>,&nbsp;<span style="color:#0055ff; font-weight:bold;">True</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;board.<span style="color:#222; font-weight:bold;">pop</span>()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;min_eval&nbsp;=&nbsp;<span style="color:#222; font-weight:bold;">min</span>(min_eval,&nbsp;eval)&nbsp;<span style="color:#00aa00; font-weight:bold;">#&nbsp;find&nbsp;min&nbsp;value&nbsp;<span style="color:#0055ff; font-weight:bold;">for</span>&nbsp;black</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">return</span>&nbsp;min_eval<br>
+<br>
+<span style="color:#0055ff; font-weight:bold;">def</span>&nbsp;<span style="color:#222; font-weight:bold;">choose_best_move</span>(board,&nbsp;depth):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;best_move&nbsp;=&nbsp;<span style="color:#0055ff; font-weight:bold;">None</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;best_value&nbsp;=&nbsp;<span style="color:#00bfbf; font-weight:bold;">float</span>(&<span style="color:#00aa00; font-weight:bold;">#x27;-inf&#x27;)&nbsp;<span style="color:#0055ff; font-weight:bold;">if</span>&nbsp;board.turn&nbsp;==&nbsp;chess.WHITE&nbsp;<span style="color:#0055ff; font-weight:bold;">else</span>&nbsp;<span style="color:#00bfbf; font-weight:bold;">float</span>(<span style="color:#cc5500;">&#x27;inf&#x27;</span>)</span><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">for</span>&nbsp;move&nbsp;<span style="color:#0055ff; font-weight:bold;">in</span>&nbsp;board.legal_moves:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;board.<span style="color:#222; font-weight:bold;">push</span>(move)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;board_value&nbsp;=&nbsp;<span style="color:#222; font-weight:bold;">minimax</span>(board,&nbsp;depth&nbsp;-&nbsp;<span style="color:#00aa88;">1</span>,&nbsp;<span style="color:#0055ff; font-weight:bold;">not</span>&nbsp;board.turn)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;board.<span style="color:#222; font-weight:bold;">pop</span>()<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">if</span>&nbsp;board.turn&nbsp;==&nbsp;chess.WHITE&nbsp;<span style="color:#0055ff; font-weight:bold;">and</span>&nbsp;board_value&nbsp;&gt;&nbsp;best_value:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;best_value&nbsp;=&nbsp;board_value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;best_move&nbsp;=&nbsp;move<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elif&nbsp;board.turn&nbsp;==&nbsp;chess.BLACK&nbsp;<span style="color:#0055ff; font-weight:bold;">and</span>&nbsp;board_value&nbsp;&lt;&nbsp;best_value:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;best_value&nbsp;=&nbsp;board_value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;best_move&nbsp;=&nbsp;move<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">return</span>&nbsp;best_move<br>
+<br>
+<span style="color:#0055ff; font-weight:bold;">def</span>&nbsp;<span style="color:#222; font-weight:bold;">play_game</span>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;board&nbsp;=&nbsp;chess.<span style="color:#222; font-weight:bold;">Board</span>()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">while</span>&nbsp;<span style="color:#0055ff; font-weight:bold;">not</span>&nbsp;board.<span style="color:#222; font-weight:bold;">is_game_over</span>():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#00bfbf; font-weight:bold;">print</span>(board)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">if</span>&nbsp;board.turn&nbsp;==&nbsp;chess.WHITE:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;move&nbsp;=&nbsp;<span style="color:#222; font-weight:bold;">choose_best_move</span>(board,&nbsp;<span style="color:#00aa88;">2</span>)&nbsp;<span style="color:#00aa00; font-weight:bold;">#&nbsp;engine&nbsp;plays&nbsp;white</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#00bfbf; font-weight:bold;">print</span>(f&quot;White&nbsp;plays:&nbsp;{move}&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0055ff; font-weight:bold;">else</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;move&nbsp;=&nbsp;<span style="color:#222; font-weight:bold;">choose_best_move</span>(board,&nbsp;<span style="color:#00aa88;">2</span>)&nbsp;<span style="color:#00aa00; font-weight:bold;">#&nbsp;engine&nbsp;plays&nbsp;black</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#00bfbf; font-weight:bold;">print</span>(f&quot;Black&nbsp;plays:&nbsp;{move}&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;board.<span style="color:#222; font-weight:bold;">push</span>(move)<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#00bfbf; font-weight:bold;">print</span>(&quot;Game&nbsp;over!&quot;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#00bfbf; font-weight:bold;">print</span>(board.<span style="color:#222; font-weight:bold;">result</span>())<br>
+<br>
+<span style="color:#0055ff; font-weight:bold;">if</span>&nbsp;__name__&nbsp;==&nbsp;<span style="color:#cc5500;">&quot;__main__&quot;</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#222; font-weight:bold;">play_game</span>()</pre>
